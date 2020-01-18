@@ -27,13 +27,14 @@ input_size  = 224*224*3   # images are 224*224 pixels and has 3 channels because
 output_size = 2      # there are 2 classes---Cat and dog
 
 # number of subprocesses to use for data loading
-num_workers = 0
+num_workers = 4
 # how many samples per batch to load
 batch_size = 60
 
 
 # define training and test data directories
-data_dir = '../Cat_Dog_data/Datasets/'
+#data_dir = '/home/aims/data_cat&dog'
+data_dir = './Cat_Dog_DataSet/'
 train_dir = os.path.join(data_dir, 'train/')
 test_dir = os.path.join(data_dir, 'test/')
 
@@ -78,8 +79,9 @@ test_transforms = transforms.Compose([
                                 transforms.Resize(image_size), 
                                 transforms.ToTensor(), 
                                 transforms.Normalize(mean, std)])
-
+print("bfore")
 train_dataset = datasetloader(train_dir, transform=train_transform)
+print(len(train_dataset))
 test_dataset = datasetloader(test_dir, transform=test_transforms)
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
@@ -93,6 +95,7 @@ accuracy_list = []
 
 def train(epoch, model):
     model.train()
+    
     for batch_idx, (data, target) in enumerate(train_loader):
         
         #print(data[0].shape)
@@ -106,7 +109,7 @@ def train(epoch, model):
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
             
-def test(model, perm=torch.arange(0, 224*224*3).long()):
+def test(model, perm=torch.arange(0, 224*224).long()):
     model.eval()
     test_loss = 0
     correct = 0
